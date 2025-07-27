@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "type": "credit",
+    "amount": 100.50,
+    "description": "Salary deposit",
+    "date": "2024-01-15T10:30:00Z",
+    "accountId": "acc123"
+  },
+  {
+    "id": "2",
+    "type": "debit",
+    "amount": 25.00,
+    "description": "Coffee shop purchase",
+    "date": "2024-01-15T14:20:00Z",
+    "accountId": "acc123"
+  },
+  {
+    "id": "3",
+    "type": "credit",
+    "amount": 500.00,
+    "description": "Freelance payment",
+    "date": "2024-01-16T09:15:00Z",
+    "accountId": "acc123"
+  },
+  {
+    "id": "4",
+    "type": "debit",
+    "amount": 75.25,
+    "description": "Grocery shopping",
+    "date": "2024-01-16T16:45:00Z",
+    "accountId": "acc123"
+  },
+  {
+    "id": "5",
+    "type": "credit",
+    "amount": 200.00,
+    "description": "Refund from online store",
+    "date": "2024-01-17T11:00:00Z",
+    "accountId": "acc123"
+  }
+] 
