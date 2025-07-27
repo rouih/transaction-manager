@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ApiError, ValidationError } from '../dto/transaciton.dto';
 import { ErrorType, ERROR_MESSAGES, NODE_ENV } from '../common/consnts';
+import { Logger } from '../utils/logger.utils';
 
 // Custom error class for application-specific errors
 export class AppError extends Error {
@@ -87,7 +88,7 @@ const sendErrorDev = (error: AppError, req: Request, res: Response): void => {
         method: req.method
     };
 
-    console.error('ERROR:', errorResponse);
+    Logger.error(`${req.method} ${req.originalUrl} - ${error.message}`, error, 'ErrorMiddleware');
     res.status(error.statusCode).json(errorResponse);
 };
 
@@ -96,7 +97,7 @@ const sendErrorProd = (error: AppError, req: Request, res: Response): void => {
         const errorResponse = formatErrorResponse(error, req);
         res.status(error.statusCode).json(errorResponse);
     } else {
-        console.error('NON-OPERATIONAL ERROR:', error);
+        Logger.error(`Non-operational error on ${req.method} ${req.originalUrl}`, error, 'ErrorMiddleware');
         res.status(500).json({
             success: false,
             error: 'Internal Server Error',

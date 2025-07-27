@@ -2,6 +2,7 @@ import { MockTransaction } from "../dto/transaciton.dto";
 import { NODE_ENV } from "../common/consnts";
 import axiosClient from "../axios/axios-client";
 import { convertApiToMockTransactions } from "./transaction-transform.utils";
+import { Logger } from "./logger.utils";
 
 const TRANSACTIONS_URL = 'https://2e36b6c35bd3.ngrok-free.app/transactions';
 
@@ -33,8 +34,10 @@ export class TransactionDataUtils {
      */
     static async fetchTransactions(): Promise<MockTransaction[]> {
         if (this.shouldUseMockData()) {
+            Logger.debug('Using mock data source for transactions', 'TransactionDataUtils');
             return this.readMockData();
         } else {
+            Logger.debug('Fetching transactions from external API', 'TransactionDataUtils');
             const response = await axiosClient.get(TRANSACTIONS_URL);
             const responseData = response.data as any;
             return convertApiToMockTransactions(responseData);
@@ -45,12 +48,18 @@ export class TransactionDataUtils {
      * Fetches transactions with pagination parameters for API calls
      */
     static async fetchTransactionsWithPagination(page: number, pageSize: number): Promise<any> {
-        const params = new URLSearchParams();
-        params.append('page', page.toString());
-        params.append('page_size', pageSize.toString());
+        try {
+            Logger.debug(`Fetching paginated transactions - page: ${page}, pageSize: ${pageSize}`, 'TransactionDataUtils');
+            const params = new URLSearchParams();
+            params.append('page', page.toString());
+            params.append('page_size', pageSize.toString());
 
-        const response = await axiosClient.get(`${TRANSACTIONS_URL}?${params.toString()}`);
-        return response.data;
+            const response = await axiosClient.get(`${TRANSACTIONS_URL}?${params.toString()}`);
+            return response.data;
+        } catch (error) {
+            Logger.error('Failed to fetch paginated transactions from API', error as Error, 'TransactionDataUtils');
+            throw error;
+        }
     }
 
     /**

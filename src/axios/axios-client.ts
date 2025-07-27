@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Logger } from '../utils/logger.utils';
 
 // Create axios instance with default configuration
 const axiosClient = axios.create({
@@ -19,11 +20,11 @@ axiosClient.interceptors.request.use(
             config.headers.Authorization = `Bearer ${token}`;
         }
 
-        console.log(`Making ${config.method?.toUpperCase()} request to: ${config.url}`);
+        Logger.debug(`Making ${config.method?.toUpperCase()} request to: ${config.url}`, 'AxiosClient');
         return config;
     },
     (error) => {
-        console.error('Request error:', error);
+        Logger.error('Request interceptor error', error, 'AxiosClient');
         return Promise.reject(error);
     }
 );
@@ -31,19 +32,19 @@ axiosClient.interceptors.request.use(
 // Response interceptor
 axiosClient.interceptors.response.use(
     (response) => {
-        console.log(`Response received from: ${response.config.url}`, response.status);
+        Logger.debug(`Response received from: ${response.config.url} - Status: ${response.status}`, 'AxiosClient');
         return response;
     },
     (error) => {
-        console.error('Response error:', error.response?.status, error.response?.data);
+        Logger.error(`Response error from ${error.config?.url} - Status: ${error.response?.status}`, error, 'AxiosClient');
 
         // Handle common error cases
         if (error.response?.status === 401) {
-            console.error('Unauthorized access');
+            Logger.error('Unauthorized access detected', undefined, 'AxiosClient');
         } else if (error.response?.status === 404) {
-            console.error('Resource not found');
+            Logger.error('Resource not found', undefined, 'AxiosClient');
         } else if (error.response?.status >= 500) {
-            console.error('Server error');
+            Logger.error('Server error detected', undefined, 'AxiosClient');
         }
 
         return Promise.reject(error);

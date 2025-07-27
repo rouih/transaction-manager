@@ -58,7 +58,55 @@ npm install swagger-ui-express swagger-jsdoc
 npm install --save-dev @types/swagger-ui-express @types/swagger-jsdoc jest @types/jest ts-jest
 ```
 
-## 🎮 Usage
+## 🐳 Docker Usage
+
+### Build and Run with Docker
+
+1. **Build the Docker image:**
+```bash
+docker build -t transaction-api .
+```
+
+2. **Run the container:**
+```bash
+# Development mode (uses mock data)
+docker run -p 3000:3000 -e NODE_ENV=development transaction-api
+
+# Production mode (uses external API)
+docker run -p 3000:3000 -e NODE_ENV=production transaction-api
+```
+
+3. **Access the application:**
+- API: `http://localhost:3000`
+- Documentation: `http://localhost:3000/api-docs`
+- Health Check: `http://localhost:3000/health`
+
+### Docker Environment Variables
+```bash
+# Run with custom port
+docker run -p 8080:8080 -e PORT=8080 transaction-api
+
+# Run in development mode
+docker run -p 3000:3000 -e NODE_ENV=development transaction-api
+
+# Run in production mode
+docker run -p 3000:3000 -e NODE_ENV=production transaction-api
+```
+
+### Docker Development Workflow
+```bash
+# Quick start for development
+docker build -t transaction-api . && docker run -p 3000:3000 -e NODE_ENV=development transaction-api
+
+# Stop running container
+docker stop $(docker ps -q --filter ancestor=transaction-api)
+
+# Remove container and image
+docker rm $(docker ps -aq --filter ancestor=transaction-api)
+docker rmi transaction-api
+```
+
+## 🎮 Local Development Usage
 
 ### Development Mode (Mock Data)
 ```bash

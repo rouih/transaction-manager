@@ -3,6 +3,7 @@ import swaggerUi from 'swagger-ui-express';
 import router from './api/routes/router.index';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware';
 import swaggerSpec from './config/swagger.config';
+import { Logger } from './utils/logger.utils';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -63,7 +64,7 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 app.get('/', (req, res) => {
     res.json({
         success: true,
-        message: 'Hello from TypeScript Express server!',
+        message: 'Welcome to the Transaction API',
         data: {
             version: '1.0.0',
             endpoints: {
@@ -157,6 +158,6 @@ app.use(errorHandler);
 
 // Start server
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    Logger.debug(`Server is running on http://localhost:${port}`, 'Server');
+    Logger.debug(`Environment: ${process.env.NODE_ENV || 'development'}`, 'Server');
 }); 

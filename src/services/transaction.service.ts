@@ -14,6 +14,7 @@ import {
     TransactionCalculationUtils,
     TransactionTransformUtils
 } from "../utils";
+import { Logger } from "../utils/logger.utils";
 
 export const getTransactions = async (): Promise<GetTransactionsServiceResponse> => {
     try {
@@ -35,6 +36,7 @@ export const getTransactions = async (): Promise<GetTransactionsServiceResponse>
             };
         }
     } catch (error) {
+        Logger.error('Failed to fetch transactions', error as Error, 'TransactionService');
         throw new Error(`Failed to fetch transactions: ${error}`);
     }
 }
@@ -102,6 +104,7 @@ export const getTransactionCount = async (page: number = 1, pageSize: number = 1
             };
         }
     } catch (error) {
+        Logger.error('Failed to fetch transaction count', error as Error, 'TransactionService');
         throw new Error(`Failed to fetch transaction count: ${error}`);
     }
 }
@@ -134,6 +137,7 @@ export const getTransactionSum = async (
 
         return response;
     } catch (error) {
+        Logger.error('Failed to calculate transaction sum', error as Error, 'TransactionService');
         throw new Error(`Failed to calculate transaction sum: ${error}`);
     }
 };
@@ -186,6 +190,7 @@ export const getTransactionFromMock = async (page: number = 1, pageSize: number 
             pagination
         };
     } catch (error) {
+        Logger.error('Failed to fetch mock transactions', error as Error, 'TransactionService');
         throw new Error(`Failed to fetch mock transactions: ${error}`);
     }
 }
