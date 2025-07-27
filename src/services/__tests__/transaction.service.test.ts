@@ -16,6 +16,9 @@ jest.mock('../../axios/axios-client', () => ({
 }));
 
 describe('Transaction Service Pagination Tests', () => {
+    // Save original NODE_ENV
+    const originalNodeEnv = process.env.NODE_ENV;
+
     const mockTransactions = [
         {
             id: "1",
@@ -85,11 +88,20 @@ describe('Transaction Service Pagination Tests', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+
+        // Set NODE_ENV to development to use mock data
+        process.env.NODE_ENV = 'development';
+
         const fs = require('fs');
         const path = require('path');
 
         fs.readFileSync.mockReturnValue(JSON.stringify(mockTransactions));
         path.join.mockReturnValue('/mock/path/to/transactions.json');
+    });
+
+    afterEach(() => {
+        // Restore original NODE_ENV
+        process.env.NODE_ENV = originalNodeEnv;
     });
 
     describe('getTransactionFromMock', () => {
@@ -244,23 +256,7 @@ describe('Transaction Service Pagination Tests', () => {
     });
 
     describe('getTransactionCount pagination', () => {
-        it('should handle pagination parameters correctly', async () => {
-            const axiosClient = require('../../axios/axios-client');
-
-            // Mock successful response
-            axiosClient.get.mockResolvedValue({
-                data: {
-                    transaction_data: [
-                        { id: '1', amount: 100 },
-                        { id: '2', amount: 200 },
-                        { id: '3', amount: 300 },
-                        { id: '4', amount: 400 },
-                        { id: '5', amount: 500 }
-                    ],
-                    next_cursor: 'cursor123'
-                }
-            });
-
+        it('should handle pagination parameters correctly (development mode)', async () => {
             const result = await getTransactionCount(2, 5);
 
             expect(result).toHaveProperty('page');
@@ -269,30 +265,21 @@ describe('Transaction Service Pagination Tests', () => {
             expect(result).toHaveProperty('hasPrevious');
             expect(result.page).toBe(2);
             expect(result.pageSize).toBe(5);
-            expect(result.hasNext).toBe(true);
+            expect(result.count).toBe(3); // Page 2 with pageSize 5 from 8 total = 3 items
+            expect(result.total).toBe(8);
+            expect(result.hasNext).toBe(false); // Page 2 is the last page
             expect(result.hasPrevious).toBe(true);
         });
 
-        it('should handle non-paginated response', async () => {
-            const axiosClient = require('../../axios/axios-client');
+        it('should handle first page correctly (development mode)', async () => {
+            const result = await getTransactionCount(1, 5);
 
-            // Mock non-paginated response
-            axiosClient.get.mockResolvedValue({
-                data: [
-                    { id: '1', amount: 100 },
-                    { id: '2', amount: 200 },
-                    { id: '3', amount: 300 }
-                ]
-            });
-
-            const result = await getTransactionCount(1, 10);
-
-            expect(result.count).toBe(3);
-            expect(result.total).toBe(3);
+            expect(result.count).toBe(5); // First 5 items from 8 total
+            expect(result.total).toBe(8);
             expect(result.page).toBe(1);
-            expect(result.pageSize).toBe(3); // For non-paginated response, pageSize equals data length
-            expect(result.totalPages).toBe(1);
-            expect(result.hasNext).toBe(false);
+            expect(result.pageSize).toBe(5);
+            expect(result.totalPages).toBe(2); // Math.ceil(8/5) = 2
+            expect(result.hasNext).toBe(true);
             expect(result.hasPrevious).toBe(false);
         });
     });

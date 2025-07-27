@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getTransactionCount, getTransactions, getTransactionFromMock, getTransactionSum } from "../../services/transaction.service";
+import { getTransactionCount, getTransactions, getTransactionSum } from "../../services/transaction.service";
 import {
     GetTransactionsRequest,
     GetTransactionCountRequest,
@@ -50,23 +50,7 @@ export const getTransactionCountController = catchAsync(async (req: Request<{}, 
     });
 });
 
-export const getMockTransactionsController = catchAsync(async (req: Request<{}, ApiResponse, {}, GetTransactionsRequest>, res: Response) => {
-    // Validate pagination parameters
-    const validationErrors = validatePaginationParams(req.query);
-    validateRequest(validationErrors);
 
-    // Parse pagination parameters
-    const { page, pageSize } = parsePaginationParams(req.query);
-
-    // Get mock transactions from service
-    const mockTransactions = await getTransactionFromMock(page, pageSize);
-
-    res.json({
-        success: true,
-        data: mockTransactions,
-        message: "Mock transactions retrieved successfully"
-    });
-});
 
 export const getTransactionSumController = catchAsync(async (req: Request<{}, ApiResponse<GetTransactionSumServiceResponse>, {}, GetTransactionSumRequest>, res: Response<ApiResponse<GetTransactionSumServiceResponse> | ApiError>) => {
     // Parse query parameters

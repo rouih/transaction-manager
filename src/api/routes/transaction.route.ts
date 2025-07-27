@@ -1,4 +1,4 @@
-import { getAllTransactionsController, getTransactionCountController, getMockTransactionsController, getTransactionSumController } from "../controllers/transacions.controller";
+import { getAllTransactionsController, getTransactionCountController, getTransactionSumController } from "../controllers/transacions.controller";
 import { Router } from 'express';
 
 const transactionRouter = Router();
@@ -8,7 +8,7 @@ const transactionRouter = Router();
  * /api/transactions/all:
  *   get:
  *     summary: Get all transactions
- *     description: Retrieve all transactions with pagination support
+ *     description: Retrieve all transactions with environment-aware data source (mock data in development, external API in production)
  *     tags: [Transactions]
  *     parameters:
  *       - $ref: '#/components/parameters/PageParam'
@@ -28,13 +28,13 @@ const transactionRouter = Router();
  *                       properties:
  *                         data:
  *                           type: array
- *                           description: Raw transaction data from API
+ *                           description: Transaction data (mock in dev, external API in prod)
  *                         transactions:
  *                           type: array
  *                           description: Parsed transaction data
  *                         next_cursor:
  *                           type: string
- *                           description: Cursor for next page
+ *                           description: Cursor for next page (production only)
  *       400:
  *         $ref: '#/components/responses/ValidationError'
  *       500:
@@ -47,7 +47,7 @@ transactionRouter.get('/all', getAllTransactionsController);
  * /api/transactions/count:
  *   get:
  *     summary: Get transaction count
- *     description: Get the count of transactions with pagination metadata
+ *     description: Get the count of transactions with pagination metadata (environment-aware data source)
  *     tags: [Transactions]
  *     parameters:
  *       - $ref: '#/components/parameters/PageParam'
@@ -71,48 +71,14 @@ transactionRouter.get('/all', getAllTransactionsController);
  */
 transactionRouter.get('/count', getTransactionCountController);
 
-/**
- * @swagger
- * /api/transactions/mock:
- *   get:
- *     summary: Get mock transactions
- *     description: Retrieve paginated mock transactions from local JSON file
- *     tags: [Transactions]
- *     parameters:
- *       - $ref: '#/components/parameters/PageParam'
- *       - $ref: '#/components/parameters/PageSizeParam'
- *     responses:
- *       200:
- *         description: Mock transactions retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               allOf:
- *                 - $ref: '#/components/schemas/ApiResponse'
- *                 - type: object
- *                   properties:
- *                     data:
- *                       type: object
- *                       properties:
- *                         data:
- *                           type: array
- *                           items:
- *                             $ref: '#/components/schemas/MockTransaction'
- *                         pagination:
- *                           $ref: '#/components/schemas/PaginationMetadata'
- *       400:
- *         $ref: '#/components/responses/ValidationError'
- *       500:
- *         $ref: '#/components/responses/InternalServerError'
- */
-transactionRouter.get('/mock', getMockTransactionsController);
+
 
 /**
  * @swagger
  * /api/transactions/sum:
  *   get:
  *     summary: Calculate transaction sum
- *     description: Calculate the total sum of transaction amounts with optional breakdown by type
+ *     description: Calculate the total sum of transaction amounts with optional breakdown by type (environment-aware data source)
  *     tags: [Transactions]
  *     parameters:
  *       - $ref: '#/components/parameters/TransactionTypeParam'
