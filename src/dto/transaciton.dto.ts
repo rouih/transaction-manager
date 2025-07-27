@@ -1,5 +1,3 @@
-// Transaction DTOs based on API response structure
-// Source: https://2e36b6c35bd3.ngrok-free.app/transactions
 
 export interface TransactionMetadata {
     failure_reason: string | null;
@@ -21,7 +19,7 @@ export interface TransactionData {
     type: 'sale' | 'refund' | 'credit_repayment';
     amount: number;
     status: 'success' | 'failed' | 'pending';
-    statement_id?: string; // Optional field for credit_repayment type
+    statement_id?: string;
     metadata: TransactionMetadata;
 }
 
@@ -93,7 +91,7 @@ export enum TransactionDataStatusEnum {
 export interface PaginationQueryParams {
     page?: string | number;
     pageSize?: string | number;
-    page_size?: string | number; // Alternative snake_case for API compatibility
+    page_size?: string | number;
 }
 
 export interface GetTransactionsRequest extends PaginationQueryParams {
@@ -109,11 +107,10 @@ export interface GetTransactionCountRequest extends PaginationQueryParams {
 }
 
 export interface GetTransactionSumRequest {
-    // Query parameters for transaction sum endpoint
     type?: 'credit' | 'debit' | 'all';
     fromDate?: string;
     toDate?: string;
-    includeBreakdown?: string | boolean; // Accept both string and boolean for query params
+    includeBreakdown?: string | boolean;
 }
 
 // ================================

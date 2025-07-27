@@ -51,5 +51,4 @@ axiosClient.interceptors.response.use(
     }
 );
 
-// Export the configured axios instance
 export default axiosClient;

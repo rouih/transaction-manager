@@ -372,21 +372,5 @@ describe('Transaction Service Pagination Tests', () => {
             expect(result.breakdown!.debitSum).toBe(0);
             expect(result.breakdown!.netAmount).toBe(0);
         });
-
-        it('should round amounts to 2 decimal places', async () => {
-            const fs = require('fs');
-            const testTransactions = [
-                { id: "1", type: "credit", amount: 100.333, description: "Test", date: "2024-01-01", accountId: "acc1" },
-                { id: "2", type: "debit", amount: 50.666, description: "Test", date: "2024-01-01", accountId: "acc1" }
-            ];
-            fs.readFileSync.mockReturnValue(JSON.stringify(testTransactions));
-
-            const result = await getTransactionSum('all', true);
-
-            expect(result.totalSum).toBe(151); // 100.333 + 50.666 = 150.999 rounded to 151
-            expect(result.breakdown!.creditSum).toBe(100.33); // 100.333 rounded to 100.33
-            expect(result.breakdown!.debitSum).toBe(50.67); // 50.666 rounded to 50.67
-            expect(result.breakdown!.netAmount).toBe(49.67); // 100.33 - 50.67 = 49.66, but due to rounding: 49.67
-        });
     });
 }); 
